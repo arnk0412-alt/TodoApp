@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  StatusBar,
 } from "react-native";
 
 import { Todo } from "./types/todo";
 import { generateId } from "./utils/generateId";
-import { getTodos, saveTodos } from "./services/storageService"; // FIXED: was "./services/storage"
+import { getTodos, saveTodos } from "./services/storageService";
 import TodoItem from "./components/TodoItem";
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | "completed" | "pending">("all");
   const [search, setSearch] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     loadTodos();
@@ -41,9 +43,7 @@ export default function App() {
 
     if (editingId) {
       setTodos((prev) =>
-        prev.map((t) =>
-          t.id === editingId ? { ...t, title: text } : t
-        )
+        prev.map((t) => (t.id === editingId ? { ...t, title: text } : t))
       );
       setEditingId(null);
     } else {
@@ -61,9 +61,7 @@ export default function App() {
 
   const toggleTodo = (id: string) => {
     setTodos((prev) =>
-      prev.map((t) =>
-        t.id === id ? { ...t, completed: !t.completed } : t
-      )
+      prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t))
     );
   };
 
@@ -85,23 +83,50 @@ export default function App() {
       if (filter === "pending") return !t.completed;
       return true;
     })
-    .filter((t) =>
-      t.title.toLowerCase().includes(search.toLowerCase())
-    );
+    .filter((t) => t.title.toLowerCase().includes(search.toLowerCase()));
+
+  // ---- THEME COLORS ----
+  const theme = {
+    background: darkMode ? "#121212" : "#ffffff",
+    text: darkMode ? "#ffffff" : "#000000",
+    inputBg: darkMode ? "#1e1e1e" : "#ffffff",
+    inputBorder: darkMode ? "#444" : "#ccc",
+    placeholder: darkMode ? "#888" : "#999",
+  };
 
   return (
-    <View style={{ flex: 1, padding: 20, marginTop: 40 }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-        Todo App
-      </Text>
+    <View style={{ flex: 1, padding: 20, marginTop: 40, backgroundColor: theme.background }}>
+      <StatusBar barStyle={darkMode ? "light-content" : "dark-content"} />
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <Text style={{ fontSize: 24, fontWeight: "bold", color: theme.text }}>
+          Todo App
+        </Text>
+
+        <TouchableOpacity
+          onPress={() => setDarkMode(!darkMode)}
+          style={{
+            backgroundColor: darkMode ? "#333" : "#eee",
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 20,
+          }}
+        >
+          <Text style={{ color: theme.text }}>{darkMode ? "☀️ Light" : "🌙 Dark"}</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* INPUT */}
       <TextInput
         placeholder="Enter todo"
+        placeholderTextColor={theme.placeholder}
         value={text}
         onChangeText={setText}
         style={{
           borderWidth: 1,
+          borderColor: theme.inputBorder,
+          backgroundColor: theme.inputBg,
+          color: theme.text,
           padding: 10,
           marginVertical: 10,
           borderRadius: 8,
@@ -124,12 +149,17 @@ export default function App() {
       {/* SEARCH */}
       <TextInput
         placeholder="Search todos"
+        placeholderTextColor={theme.placeholder}
         value={search}
         onChangeText={setSearch}
         style={{
           borderWidth: 1,
+          borderColor: theme.inputBorder,
+          backgroundColor: theme.inputBg,
+          color: theme.text,
           padding: 8,
           marginVertical: 10,
+          borderRadius: 8,
         }}
       />
 
@@ -137,7 +167,12 @@ export default function App() {
       <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
         {["all", "completed", "pending"].map((f) => (
           <TouchableOpacity key={f} onPress={() => setFilter(f as any)}>
-            <Text style={{ fontWeight: filter === f ? "bold" : "normal" }}>
+            <Text
+              style={{
+                fontWeight: filter === f ? "bold" : "normal",
+                color: theme.text,
+              }}
+            >
               {f.toUpperCase()}
             </Text>
           </TouchableOpacity>
@@ -154,6 +189,7 @@ export default function App() {
             onToggle={toggleTodo}
             onDelete={deleteTodo}
             onEdit={editTodo}
+            darkMode={darkMode}
           />
         )}
       />
