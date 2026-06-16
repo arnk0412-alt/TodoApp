@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Todo } from "../types/todo";
 
 type Props = {
@@ -46,6 +47,8 @@ export default function TodoItem({ item, onToggle, onDelete, onEdit, darkMode }:
     : "#fff";
 
   const textColor = darkMode ? "#ffffff" : "#000000";
+  const editColor = darkMode ? "#8ab4f8" : "#1a73e8";
+  const deleteColor = "#e53935";
 
   return (
     <Animated.View
@@ -58,6 +61,7 @@ export default function TodoItem({ item, onToggle, onDelete, onEdit, darkMode }:
         borderRadius: 10,
         flexDirection: "row",
         justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       <TouchableOpacity onPress={() => onToggle(item.id)} style={{ flex: 1 }}>
@@ -65,19 +69,20 @@ export default function TodoItem({ item, onToggle, onDelete, onEdit, darkMode }:
           style={{
             textDecorationLine: item.completed ? "line-through" : "none",
             color: textColor,
+            fontSize: 16,
           }}
         >
           {item.title}
         </Text>
       </TouchableOpacity>
 
-      <View style={{ flexDirection: "row", gap: 10 }}>
+      <View style={{ flexDirection: "row", gap: 16 }}>
         <TouchableOpacity onPress={() => onEdit(item.id)}>
-          <Text style={{ color: darkMode ? "#8ab4f8" : "#1a73e8" }}>Edit</Text>
+          <Ionicons name="pencil" size={20} color={editColor} />
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleDelete}>
-          <Text style={{ color: "red" }}>Delete</Text>
+          <Ionicons name="trash" size={20} color={deleteColor} />
         </TouchableOpacity>
       </View>
     </Animated.View>
