@@ -74,7 +74,7 @@ Make sure you have the following installed:
 
 ## APK Download
 
-[Download APK](https://expo.dev/accounts/tinku123456/projects/TodoApp/builds/2aabc2ce-7a4b-4a6b-a630-59b20655fbc5)
+[Download APK](https://expo.dev/accounts/tinku123456/projects/TodoApp/builds/3baa261e-05ac-474d-a839-4b88a566e4d1)
 
 ## Demo Video
 
